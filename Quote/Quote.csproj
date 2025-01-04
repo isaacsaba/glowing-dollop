@@ -3,11 +3,16 @@
 	<PropertyGroup>
 		<TargetFramework>netstandard1.0</TargetFramework>
 		<PackageId>glowing-dollop</PackageId>
-		<Version>0.0.1</Version>
+		<Version>10.0.5</Version>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<PackageOutputPath>C:\LocalNuGets</PackageOutputPath>
+		<IncludeSymbols>True</IncludeSymbols>
 	</PropertyGroup>
 
 	<ItemGroup>
 	  <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+	  <PackageReference Include="System.Net.Requests" Version="4.3.0" />
+	  <PackageReference Include="System.ValueTuple" Version="4.5.0" />
 	</ItemGroup>
 
 </Project>

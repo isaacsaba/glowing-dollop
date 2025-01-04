@@ -1,8 +1,9 @@
-﻿using System;
-using System.Threading.Tasks;
-using Quote.Contracts;
+﻿using Quote.Contracts;
 using Quote.Models;
+using Quote.Models.Api;
 using Quote.Models.Provider;
+using System;
+using System.Threading.Tasks;
 
 namespace Quote
 {
@@ -10,14 +11,16 @@ namespace Quote
     {
         private readonly IMapper mapper;
         private readonly IServiceWrapper wrapper;
+        private readonly IRefactoredService refactored;
 
-        public QuoteService(IMapper mapper, IServiceWrapper wrapper)
+        public QuoteService(IMapper mapper, IServiceWrapper wrapper, IRefactoredService refactored)
         {
             this.mapper = mapper;
             this.wrapper = wrapper;
+            this.refactored = refactored;
         }
 
-        public TourQuoteResponse Quote(TourQuoteRequest request)
+        public async  Task<TourQuoteResponse> Quote(TourQuoteRequest request)
         {
             var detailRequest = this.mapper.Convert(request);
             var detailResponse = new ActivitiesDetailResponse();
@@ -30,8 +33,13 @@ namespace Quote
                 throw new Exception(string.Format("Unable to find the selected tour. Tour Code: {0}, Tour Uri: {1}", request.TourCode, request.TourUri));
             }
 
-            var result = this.mapper.Convert(request, detailResponse);
+            var result = await this.mapper.Convert(request, detailResponse);
             return result;
+        }
+
+        public async Task<RefactoredResponse> GetMarginAsync(string code)
+        {
+            return await this.refactored.GetMarginAsync(code);
         }
     }
 }

@@ -1,13 +1,11 @@
-﻿using Quote.Models;
-using Quote.Models.Api;
+﻿using Quote.Models.Api;
 using System.Net;
 using System.Threading.Tasks;
 
 namespace Quote.Contracts
 {
-    public interface IQuoteEngine
+    public interface IRefactoredService
     {
-        Task<TourQuoteResponse> Quote(TourQuoteRequest request);
         Task<RefactoredResponse> GetMarginAsync(string code);
     }
 }

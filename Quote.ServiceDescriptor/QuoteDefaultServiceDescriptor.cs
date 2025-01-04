@@ -11,6 +11,7 @@ namespace Quote.ServiceDescriptor
             container.Register<IMapper, Mapper>();
             container.Register<IServiceWrapper, ServiceApitude>();
             container.Register<IQuoteEngine, QuoteService>();
+            container.Register<IRefactoredService, RefactoredService>();
         }
     }
 }

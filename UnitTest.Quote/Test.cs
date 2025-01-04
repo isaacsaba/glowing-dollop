@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using LightInject;
 using NUnit.Framework;
 using Quote;
@@ -65,6 +66,15 @@ namespace UnitTest.Quote
             };
             Assert.Throws<InvalidOperationException>(
                 () => this.quote.Quote(request));
+        }
+
+        [Test]
+        public async Task TestApi()
+        {
+            var request = "E-U10-DSCVCOVE";
+            var result = await this.quote.GetMarginAsync(request);
+            Assert.IsNotNull(result);
+
         }
     }
 }

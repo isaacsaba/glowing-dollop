@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Quote.Contracts;
 using Quote.Models;
 using Quote.Models.Provider;
@@ -67,13 +68,13 @@ namespace Quote
             return newRequest;
         }
 
-        public TourQuoteResponse Convert(TourQuoteRequest request, ActivitiesDetailResponse activity)
+        public async Task<TourQuoteResponse> Convert(TourQuoteRequest request, ActivitiesDetailResponse activity)
         {
             var currency = (Currency)Enum.Parse(typeof(Currency), activity.Activity.Currency);
             var exchangeRate = 1;
             var tour = this.GetTour(request, activity.Activity);
             var tourQuotes = new List<TourQuote>();
-            var modalities = activity.Activity.Modalities.Where(w => w.Questions == null || !w.Questions.Any()).ToList();
+            var modalities = activity.Activity.Modalities.Where(w => w.Questions != null || !w.Questions.Any()).ToList();
             foreach (var modality in modalities)
             {
                 var onlyAdults = this.GetAdultsOnly(modality);
@@ -113,7 +114,7 @@ namespace Quote
                 foreach (var tourQuote in tourQuotes)
                 {
                     var modality = activity.Activity.Modalities.FirstOrDefault(f => f.Code == tourQuote.ContractService.ServiceCode);
-                    this.SetTourCalculatedQuote(request, calculatedQuote, tourQuote, modality, exchangeRate);
+                    await this.SetTourCalculatedQuote(request, calculatedQuote, tourQuote, modality, exchangeRate);
                 }
 
                 calculatedQuote.CancellationPolicies = this.GetCancellationPolicies(request, calculatedQuote, currency, modalities);
@@ -136,12 +137,12 @@ namespace Quote
             return result;
         }
 
-        private void SetTourCalculatedQuote(TourQuoteRequest request, TourCalculatedQuote calculatedQuote, TourQuote tourQuote, Modality modality, decimal exchangeRate)
+        private async Task SetTourCalculatedQuote(TourQuoteRequest request, TourCalculatedQuote calculatedQuote, TourQuote tourQuote, Modality modality, decimal exchangeRate)
         {
             var rate = modality.Rates.FirstOrDefault();
             var rateDetail = rate?.RateDetails.FirstOrDefault();
             var totalNetAmount = rateDetail.TotalAmount.Amount * exchangeRate;
-            var margin = this.marginProvider.GetMargin(modality.Code);
+            var margin = await this.marginProvider.GetMarginApi(modality.Code);
             var totalAmount = this.ApplyMarginToRate(totalNetAmount, margin);
             calculatedQuote.totalNetRate = (double)rateDetail.TotalAmount.Amount;
             calculatedQuote.totalAmount = (double)totalAmount;

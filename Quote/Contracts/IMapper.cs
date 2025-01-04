@@ -1,5 +1,6 @@
 ﻿using Quote.Models;
 using Quote.Models.Provider;
+using System.Threading.Tasks;
 
 namespace Quote.Contracts
 {
@@ -7,6 +8,6 @@ namespace Quote.Contracts
     {
         ActivitiesDetailRequest Convert(TourQuoteRequest request);
 
-        TourQuoteResponse Convert(TourQuoteRequest request, ActivitiesDetailResponse activity);
+        Task<TourQuoteResponse> Convert(TourQuoteRequest request, ActivitiesDetailResponse activity);
     }
 }
